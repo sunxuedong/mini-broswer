@@ -5,10 +5,7 @@ let currentTextNode = null;
 let stack = [{ type: "document", children: [] }];
 
 function emit(token) {
-    // if (token.type !== "text")
-    console.log(token);
-    if (token.type === "text") return;
-
+    // console.log(token);
     let top = stack[stack.length - 1];
 
     if (token.type === "startTag") {
@@ -44,6 +41,16 @@ function emit(token) {
             stack.pop();
         }
         currentTextNode = null;
+    } else if (token.type === "text") {
+        if (currentTextNode === null) {
+            currentTextNode = {
+                type: "text",
+                content: "",
+            };
+
+            top.children.push(currentTextNode);
+        }
+        currentTextNode.content += token.content;
     }
 }
 
@@ -58,10 +65,10 @@ function data(c) {
         });
         return;
     } else {
-        // emit({
-        //     type: "text",
-        //     content: c,
-        // });
+        emit({
+            type: "text",
+            content: c,
+        });
         return data;
     }
 }
@@ -252,5 +259,5 @@ exports.parseHTML = function parseHTML(html) {
     }
     state = state(EOF);
 
-    console.log(stack[0]);
+    return stack[0];
 };
