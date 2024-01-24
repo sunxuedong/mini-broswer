@@ -1,5 +1,7 @@
 const css = require("css");
 
+const layout = require("./layout");
+
 const EOF = Symbol("EOF"); // EOF: End Of File
 
 let currentToken = null;
@@ -172,6 +174,9 @@ function emit(token) {
             if (top.tagName === "style") {
                 addCSSRules(top.children[0].content);
             }
+
+            layout(top);
+
             stack.pop();
         }
         currentTextNode = null;
